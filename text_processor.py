@@ -20,7 +20,8 @@ def print_items(story_words):
         while paragraphCursor < 6:
             if (word_cursor + paragraphCursor) == len(story_words):
                 break
-            word_list += story_words[word_cursor + paragraphCursor] + ' '
+            word_list += str(story_words[word_cursor + paragraphCursor])
+            word_list += ' '
             paragraphCursor += 1
         word_cursor += paragraphCursor
         word_list += '\n'
