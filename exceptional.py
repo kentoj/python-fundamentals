@@ -2,6 +2,8 @@
 
 import sys
 
+from math import log
+
 
 def convert(item):
     """
@@ -17,8 +19,15 @@ def convert(item):
     """
     try:
         return int(item)
-    except (ValueError, TypeError):
-        return -1
+    except (ValueError, TypeError) as e:
+        print("Conversion Error: {}"
+              .format(str(e)),
+              file=sys.stderr)
+        raise
+
+
+def string_log(s):
+    return log(convert(s))
 
 if __name__ == '__main__':
     print(convert(sys.argv[1]))
