@@ -4,7 +4,7 @@ import sys
 
 
 def convert(item):
-    '''
+    """
     Convert to an integer.
     Args:
         item: some object
@@ -14,14 +14,11 @@ def convert(item):
 
     Throws:
         a ValueException
-    '''
+    """
     try:
-        x = int(item)
-        print(str.format('Conversion succeeded! x= {}', x))
-    except ValueError:
-        print('Conversion Failed')
-        x = -1
-    return x
+        return int(item)
+    except (ValueError, TypeError):
+        return -1
 
 if __name__ == '__main__':
     print(convert(sys.argv[1]))
