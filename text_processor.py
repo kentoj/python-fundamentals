@@ -59,4 +59,4 @@ def main(url):
     print_items(fetch_words(url))
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(sys.argv[1]) # The 0th arg is the module filename
