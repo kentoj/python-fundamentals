@@ -15,7 +15,12 @@ def convert(item):
     Throws:
         a ValueException
     '''
-    x = int(item)
+    try:
+        x = int(item)
+        print(str.format('Conversion succeeded! x= {}', x))
+    except ValueError:
+        print('Conversion Failed')
+        x = -1
     return x
 
 if __name__ == '__main__':
