@@ -26,5 +26,9 @@ def fetch_words():
 def print_words(word_list):
     print(word_list)
 
-if __name__ == '__main__':
+
+def main():
     print(fetch_words())
+
+if __name__ == '__main__':
+    main()
