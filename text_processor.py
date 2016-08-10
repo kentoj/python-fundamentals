@@ -1,8 +1,25 @@
+"""Retrieve and print words from a URL.
+
+Usage:
+
+    python3 text_processor.py <URL>
+"""
+
+import sys
 from urllib.request import urlopen
 
 
-def fetch_words():
-    with urlopen('http://sixty-north.com/c/t.txt') as story:
+def fetch_words(url):
+    """Fetch a list of words from a URL.
+
+    Args:
+        url: The URL of a UTF-8 text document.
+
+    Returns:
+        A UTF-8-decoded list of strings containing the words from the document.
+
+    """
+    with urlopen(url) as story:
         story_words = []
         for line in story:
             line_words = line.decode('utf-8').split()
@@ -11,16 +28,21 @@ def fetch_words():
         return story_words
 
 
-def print_items(story_words):
+def print_items(items):
+    """Print items six per line with a space in between each item
+
+    Args:
+        items: an iterable series that can be parsed as a string
+    """
     word_list = ''
     word_cursor = 0
-    print("Word Count", len(story_words))
-    while word_cursor < len(story_words):
+    print("Word Count", len(items))
+    while word_cursor < len(items):
         paragraphCursor = 0
         while paragraphCursor < 6:
-            if (word_cursor + paragraphCursor) == len(story_words):
+            if (word_cursor + paragraphCursor) == len(items):
                 break
-            word_list += str(story_words[word_cursor + paragraphCursor])
+            word_list += str(items[word_cursor + paragraphCursor])
             word_list += ' '
             paragraphCursor += 1
         word_cursor += paragraphCursor
@@ -28,8 +50,13 @@ def print_items(story_words):
     print(word_list)
 
 
-def main():
-    print_items(fetch_words())
+def main(url):
+    """Print each word from a text document from a URL.
+
+    Args:
+        url: The URL to a UTF-8 text document
+    """
+    print_items(fetch_words(url))
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])
