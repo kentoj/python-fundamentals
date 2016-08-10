@@ -1,8 +1,10 @@
 from urllib.request import urlopen
 
+
 def fetch_words():
     with urlopen('http://sixty-north.com/c/t.txt') as story:
         story_words = []
+        word_list = ''
         for line in story:
             line_words = line.decode('utf-8').split()
             for word in line_words:
@@ -14,10 +16,15 @@ def fetch_words():
             while paragraphCursor < 6:
                 if (wordCursor + paragraphCursor) == len(story_words):
                     break
-                print(story_words[wordCursor+paragraphCursor], end=' ')
+                word_list += story_words[wordCursor + paragraphCursor] + ' '
                 paragraphCursor += 1
             wordCursor += paragraphCursor
-            print()
+            word_list += '\n'
+        return word_list
+
+
+def print_words(word_list):
+    print(word_list)
 
 if __name__ == '__main__':
-    fetch_words()
+    print(fetch_words())
