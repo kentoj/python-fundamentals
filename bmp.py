@@ -33,8 +33,8 @@ def write_grayscale(filename, pixels):
         bmp.write(b'\x28\x00\x00\x00')  # Image header size in bytes - 40 decimal
         bmp.write(_int32_to_bytes(width))  # Image width in pixels
         bmp.write(_int32_to_bytes(height))  # Image height in pixels
-        bmp.write(b'\x01\x00')          # Number of image planes
-        bmp.write(b'\x08\x00')          # Bits per pixel 8 for grayscale
+        bmp.write(b'\x01\x00')  # Number of image planes
+        bmp.write(b'\x08\x00')  # Bits per pixel 8 for grayscale
         bmp.write(b'\x00\x00\x00\x00')  # No compression
         bmp.write(b'\x00\x00\x00\x00')  # Zero for uncompressed images
         bmp.write(b'\x00\x00\x00\x00')  # Unused pixels per meter
@@ -72,3 +72,34 @@ def _int32_to_bytes(i):
                   i >> 8 & 0xff,
                   i >> 16 & 0xff,
                   i >> 24 & 0xff))
+
+
+def dimensions(filename):
+    """Determine the dimensions in pixels of a BMP image.
+
+    Args:
+        filename: The filename of a BMP file.
+
+    Returns:
+        A tuple containing two integer with the width
+        and height in pixels.
+
+    Raises:
+        ValueError: If the file was not aBMP file.
+        OSError: If there was a problem reading the file.
+    """
+    with open(filename, 'rb') as f:
+        magic = f.read(2)
+        if magic != b'BM':
+            raise ValueError("{} is not a BMP file".format(filename))
+
+        f.seek(18)
+        width_bytes = f.read(4)
+        height_bytes = f.read(4)
+
+        return (_bytes_to_int32(width_bytes),
+                _bytes_to_int32(height_bytes))
+
+
+def _bytes_to_int32(b):
+    return b[0] | (b[1] << 8) | (b[2] << 16 | (b[3] << 24))
