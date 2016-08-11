@@ -1,5 +1,8 @@
 """Show how generators work"""
 
+from itertools import islice, count
+from math import sqrt
+
 
 def gen123():
     yield 1
@@ -82,11 +85,26 @@ def lucas():
     b = 1
     while True:
         yield b
-        a, b = b, a+b
+        a, b = b, a + b
+
 
 def run_lucas():
     for item in take(10, lucas()):
         print(item)
+
+
+def is_prime(x):
+    if x < 2:
+        return False
+    for i in range(2, int(sqrt(x)) + 1):
+        if x % i == 0:
+            return False
+    return True
+
+
+thousand_primes = islice((x for x in count() if is_prime(x)), 1000)
+
+
 
 if __name__ == '__main__':
     run_take()
@@ -95,4 +113,4 @@ if __name__ == '__main__':
     run_pipeline()
     print("run lucas")
     run_lucas()
-
+    print("sum of first thousand primes", sum(thousand_primes))
