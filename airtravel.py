@@ -28,6 +28,36 @@ class Flight:
     def aircraft_model(self):
         return self._aircraft.model()
 
+    def allocate_seat(self, seat, passenger):
+        """Allocate a seat to a passenger.
+
+        Args:
+            seat: A seat designator such as '12C' or '21F'.
+            passenger:
+
+        Raises:
+            ValueError: If the seat is unavailable.
+        """
+        rows, seat_letters = self._aircraft.seating_plan()
+
+        letter = seat[-1]
+        if letter not in seat_letters:
+            raise ValueError("Invalid seat letter {} for this flight. Valid letters: {}".format(letter, seat_letters))
+
+        row_text = seat[:-1]
+        try:
+            row = int(row_text)
+        except ValueError:
+            raise ValueError("Invalid seat row {}".format(row_text))
+
+        if row not in rows:
+            raise ValueError("invalid row number {} for this flight. Valid row nubmers: {}".format(row, list(rows)))
+
+        if self._seating[row][letter] is not None:
+            raise ValueError("Seat {} already occupied by {}".format(seat, self._seating[row][letter]))
+
+        self._seating[row][letter] = passenger
+
 
 class Aircraft:
     def __init__(self, registration, model, num_rows, num_seats_per_row):
