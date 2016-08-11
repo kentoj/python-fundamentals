@@ -28,17 +28,16 @@ class Flight:
     def aircraft_model(self):
         return self._aircraft.model()
 
-    def allocate_seat(self, seat, passenger):
-        """Allocate a seat to a passenger.
+    def _parse_seat(self, seat):
+        """Parse a seat designator into a valid row and letter
 
         Args:
-            seat: A seat designator such as '12C' or '21F'.
-            passenger:
+            seat: A seat designator such as 11B
 
-        Raises:
-            ValueError: If the seat is unavailable.
+        Returns:
+            A tuple containing an integer and a string for row and seat.
         """
-        rows, seat_letters = self._aircraft.seating_plan()
+        row_numbers, seat_letters = self._aircraft.seating_plan()
 
         letter = seat[-1]
         if letter not in seat_letters:
@@ -50,14 +49,51 @@ class Flight:
         except ValueError:
             raise ValueError("Invalid seat row {}".format(row_text))
 
-        if row not in rows:
-            raise ValueError("invalid row number {} for this flight. Valid row nubmers: {}".format(row, list(rows)))
+        if row not in row_numbers:
+            raise ValueError(
+                "invalid row number {} for this flight. Valid row nubmers: {}".format(row, list(row_numbers)))
+
+        return row, letter
+
+    def allocate_seat(self, seat, passenger):
+        """Allocate a seat to a passenger.
+
+        Args:
+            seat: A seat designator such as '12C' or '21F'.
+            passenger:
+
+        Raises:
+            ValueError: If the seat is unavailable.
+        """
+
+        row, letter = self._parse_seat(seat)
 
         if self._seating[row][letter] is not None:
             raise ValueError("Seat {} already occupied by {}".format(seat, self._seating[row][letter]))
-
         self._seating[row][letter] = passenger
 
+    def relocate_passenger(self, from_seat, to_seat):
+        """Relocate passenger to a different seat
+
+        Args:
+            from_seat: The existing seat designator for the passenger to be moved.
+            to_seat: The new seat designator.
+        """
+
+        from_row, from_letter = self._parse_seat(from_seat)
+        to_row, to_letter = self._parse_seat(to_seat)
+
+        if self._seating[from_row][from_letter] is None:
+            raise ValueError("Seat {} has nobody to relocate".format(from_seat))
+
+        if self._seating[to_row][to_letter] is not None:
+            raise ValueError("Seat {} already occupied by {}".format(to_seat, self._seating[to_row][to_letter]))
+        self._seating[to_row][to_letter] = self._seating[from_row][from_letter]
+        self._seating[from_row][from_letter] = None
+
+    def num_available_seats(self):
+        return sum(sum(1 for s in row.values() if s is None)
+                         for row in self._seating if row is not None)
 
 class Aircraft:
     def __init__(self, registration, model, num_rows, num_seats_per_row):
@@ -75,3 +111,11 @@ class Aircraft:
     def seating_plan(self):
         return (range(1, self._num_rows + 1),
                 "ABCDEFGHJKLMNOP"[:self._num_seats_per_row])
+
+
+def make_flight():
+    f = Flight("MSJJ26513", Aircraft("G_ENDQ", "Airbus 261", num_rows=26, num_seats_per_row=4))
+    f.allocate_seat("1A", "Larry")
+    f.allocate_seat("1B", "Lonnie")
+    f.allocate_seat("1C", "Richard")
+    return f
