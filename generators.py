@@ -76,8 +76,23 @@ def run_pipeline():
         print(item)
 
 
+def lucas():
+    yield 2
+    a = 2
+    b = 1
+    while True:
+        yield b
+        a, b = b, a+b
+
+def run_lucas():
+    for item in take(10, lucas()):
+        print(item)
+
 if __name__ == '__main__':
     run_take()
     run_distinct()
     print("pipelined")
     run_pipeline()
+    print("run lucas")
+    run_lucas()
+
